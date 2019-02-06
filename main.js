@@ -1,4 +1,12 @@
+"use strict"
+
+let gameCounter = 0;
+let playerX = [],
+  playerY = [];
+const parent = document.querySelector(".parent");
+
 buildGrid();
+
 
 function buildGrid () {
   let div = document.querySelector("div");
@@ -21,30 +29,32 @@ function buildGrid () {
   turnListener();
 }
 
-let gameCounter = 0;
-let playerX = [],
-  playerY = [];
+
 
 function turnListener() {
   // Listener for clicks on grid
-  document.querySelector(".parent").addEventListener("click", function(event) {
+  parent.addEventListener("click", function(event) {
     if(event.target.classList.contains("square") && !event.target.classList.contains("played")) {
       gameCounter++;
       let gridSquare = event.target.classList[1].substr(7);
       gridSquare = Number(gridSquare);
       event.target.classList.add("played");
 
+      if(gameCounter === 9) {
+        stalemateState();
+      }
+
       // Calculates who turn it is
       if(gameCounter % 2 == 0) {
         event.target.style.backgroundColor = "forestGreen";
         playerY.push(gridSquare);
         playerY.sort();
-        checkWon(playerY, "playerY");
+        checkTurn(playerY, "playerY");
       } else {
         event.target.style.backgroundColor = "tomato";
         playerX.push(gridSquare);
         playerX.sort();
-        checkWon(playerX, "playerX")
+        checkTurn(playerX, "playerX")
       }
 
     }
@@ -52,11 +62,11 @@ function turnListener() {
   })
 }
 
-function checkWon (turn, player) {
+function checkTurn (turn, player) {
 
     // Debug text is the stand in for a true winning state
-    const debug = document.querySelector(".debug");
-    debug.innerHTML = "playerX: " + playerX + "<br>playerY: " + playerY +  "<br>Turn: " + turn;
+      // const debug = document.querySelector(".debug");
+      // debug.innerHTML = "playerX: " + playerX + "<br>playerY: " + playerY +  "<br>Turn: " + turn;
     let i = 0;
     // let row1Win = turn[i] === 0 && turn[(i + 1)] === 1 && turn[(i + 2)] === 2;
     // let row2Win = turn[i] === 3 && turn[(i + 1)] === 4 && turn[(i + 2)] === 5;
@@ -65,8 +75,11 @@ function checkWon (turn, player) {
     // let vertical1Win = turn[i] === 0 && turn[(i + 1)] === 4,
 
     while(i < turn.length) {
+
+      // If any winning condition is met then set Win state
         if(rowWin(i, turn) || verticalWin(i, turn) || diagonalWin(i, turn)) {
-          debug.innerHTML += "<br>Woot! " + player + " Won!";
+         // debug.innerHTML += "<br>Woot! " + player + " Won!";
+         winState(player);
         }
         i ++;
     }
@@ -94,4 +107,32 @@ function diagonalWin(i, turn) {
   } else if (turn[i] === 2 && turn[i + 1] === 4 && turn[i + 2] === 6 ) {
     return true;
   }
+}
+
+function winState(player) {
+  const winText = document.createElement("h1");
+  winText.textContent = "W00t! " + player + " Won!";
+
+
+
+  parent.innerHTML = "";
+  parent.appendChild(winText);
+  parent.appendChild(playAgain());
+}
+
+function playAgain() {
+  const playAgain = document.createElement("button");
+  playAgain.textContent = "Play Again?";
+  playAgain.addEventListener("click", function() {
+    resetGame();
+  });
+  return playAgain;
+}
+
+function resetGame () {
+  parent.innerHTML = "";
+  let gameCounter = 0,
+    playerX = [],
+    playerY = [];
+  buildGrid();
 }
