@@ -7,7 +7,6 @@ const parent = document.querySelector(".parent");
 
 buildGrid();
 
-
 function buildGrid () {
   let div = document.querySelector("div");
 
@@ -64,21 +63,12 @@ function turnListener() {
 
 function checkTurn (turn, player) {
 
-    // Debug text is the stand in for a true winning state
-      // const debug = document.querySelector(".debug");
-      // debug.innerHTML = "playerX: " + playerX + "<br>playerY: " + playerY +  "<br>Turn: " + turn;
     let i = 0;
-    // let row1Win = turn[i] === 0 && turn[(i + 1)] === 1 && turn[(i + 2)] === 2;
-    // let row2Win = turn[i] === 3 && turn[(i + 1)] === 4 && turn[(i + 2)] === 5;
-    // let row3Win = turn[i] === 6 && turn[(i + 1)] === 7 && turn[(i + 2)] === 8;
-
-    // let vertical1Win = turn[i] === 0 && turn[(i + 1)] === 4,
 
     while(i < turn.length) {
 
       // If any winning condition is met then set Win state
         if(rowWin(i, turn) || verticalWin(i, turn) || diagonalWin(i, turn)) {
-         // debug.innerHTML += "<br>Woot! " + player + " Won!";
          winState(player);
         }
         i ++;
@@ -113,10 +103,17 @@ function winState(player) {
   const winText = document.createElement("h1");
   winText.textContent = "W00t! " + player + " Won!";
 
-
-
   parent.innerHTML = "";
   parent.appendChild(winText);
+  parent.appendChild(playAgain());
+}
+
+function stalemateState() {
+  const endText = document.createElement("h1");
+  endText.textContent = "Sad face no winners";
+
+  parent.innerHTML = "";
+  parent.appendChild(endText);
   parent.appendChild(playAgain());
 }
 
@@ -131,8 +128,8 @@ function playAgain() {
 
 function resetGame () {
   parent.innerHTML = "";
-  let gameCounter = 0,
-    playerX = [],
-    playerY = [];
+  gameCounter = 0;
+  playerX = [];
+  playerY = [];
   buildGrid();
 }
